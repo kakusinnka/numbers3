@@ -92,6 +92,10 @@ textarea {
   gap: 8px;
 }
 
+.mobile-menu-toggle {
+  display: none;
+}
+
 .language-switcher {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -583,7 +587,70 @@ textarea {
   }
 
   .sidebar {
+    position: sticky;
+    top: 0;
     padding: 20px 16px;
+    gap: 16px;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .brand {
+    min-height: 48px;
+    padding-right: 58px;
+  }
+
+  .mobile-menu-toggle {
+    position: absolute;
+    top: 24px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 8px;
+    display: grid;
+    place-content: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+  }
+
+  .mobile-menu-toggle span {
+    width: 22px;
+    height: 2px;
+    border-radius: 999px;
+    background: #ffffff;
+    transition: transform 180ms ease, opacity 180ms ease;
+  }
+
+  .sidebar.menu-open .mobile-menu-toggle span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .sidebar.menu-open .mobile-menu-toggle span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .sidebar.menu-open .mobile-menu-toggle span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .language-switcher,
+  .nav-list,
+  .source-note {
+    display: none;
+  }
+
+  .sidebar.menu-open .language-switcher {
+    display: grid;
+  }
+
+  .sidebar.menu-open .nav-list {
+    display: grid;
+  }
+
+  .sidebar.menu-open .source-note {
+    display: block;
   }
 
   .nav-list {
