@@ -14,26 +14,31 @@
   </head>
   <body>
     <div class="app-shell">
-      <aside class="sidebar" aria-label="主导航">
+      <aside class="sidebar" aria-label="主导航" data-i18n-attr="aria-label:sidebarAria">
         <div class="brand">
           <span class="brand-mark">N3</span>
           <div>
             <strong>ナンバーズ3</strong>
-            <span>历史开奖统计</span>
+            <span data-i18n="brandSubtitle">历史开奖统计</span>
           </div>
         </div>
 
+        <div class="language-switcher" role="group" aria-label="语言切换" data-i18n-attr="aria-label:languageAria">
+          <button class="active" data-lang="zh">中文</button>
+          <button data-lang="ja">日本語</button>
+        </div>
+
         <nav class="nav-list">
-          <a href="#overview" class="active">总览</a>
-          <a href="#frequency">号码频率</a>
-          <a href="#patterns">形态分析</a>
-          <a href="#records">开奖列表</a>
-          <a href="#import">导入数据</a>
+          <a href="#overview" class="active" data-i18n="navOverview">总览</a>
+          <a href="#frequency" data-i18n="navFrequency">号码频率</a>
+          <a href="#patterns" data-i18n="navPatterns">形态分析</a>
+          <a href="#records" data-i18n="navRecords">开奖列表</a>
+          <a href="#import" data-i18n="navImport">导入数据</a>
         </nav>
 
         <div class="source-note">
-          <strong>数据说明</strong>
-          <p>页面内置为演示数据。可在“导入数据”中粘贴真实 CSV，字段为 draw,date,number。</p>
+          <strong data-i18n="sourceTitle">数据说明</strong>
+          <p data-i18n="sourceBody">页面内置为演示数据。可在“导入数据”中粘贴真实 CSV，字段为 draw,date,number。</p>
         </div>
       </aside>
 
@@ -41,36 +46,36 @@
         <section class="hero" id="overview">
           <div class="hero-copy">
             <p class="eyebrow">Japan Numbers 3 Analytics</p>
-            <h1>日本ナンバーズ3历史开奖结果统计站</h1>
-            <p>
+            <h1 data-i18n="heroTitle">日本ナンバーズ3历史开奖结果统计站</h1>
+            <p data-i18n="heroBody">
               快速查看开奖号码、和值走势、数字冷热、奇偶大小与组选形态，适合用来整理公开历史数据并做轻量分析。
             </p>
           </div>
-          <div class="latest-panel" aria-label="最新开奖">
-            <span>最新一期</span>
+          <div class="latest-panel" aria-label="最新开奖" data-i18n-attr="aria-label:latestAria">
+            <span data-i18n="latestLabel">最新一期</span>
             <strong id="latestNumber">---</strong>
             <small id="latestMeta">等待数据</small>
           </div>
         </section>
 
-        <section class="metrics-grid" aria-label="统计概览">
+        <section class="metrics-grid" aria-label="统计概览" data-i18n-attr="aria-label:metricsAria">
           <article class="metric">
-            <span>记录期数</span>
+            <span data-i18n="metricDraws">记录期数</span>
             <strong id="totalDraws">0</strong>
-            <small>当前数据集</small>
+            <small data-i18n="metricDrawsSub">当前数据集</small>
           </article>
           <article class="metric">
-            <span>平均和值</span>
+            <span data-i18n="metricAverage">平均和值</span>
             <strong id="averageSum">0</strong>
-            <small>三位数字合计</small>
+            <small data-i18n="metricAverageSub">三位数字合计</small>
           </article>
           <article class="metric">
-            <span>最热数字</span>
+            <span data-i18n="metricHot">最热数字</span>
             <strong id="hotDigit">-</strong>
             <small id="hotDigitCount">出现 0 次</small>
           </article>
           <article class="metric">
-            <span>最常见形态</span>
+            <span data-i18n="metricPattern">最常见形态</span>
             <strong id="topPattern">-</strong>
             <small id="topPatternCount">占比 0%</small>
           </article>
@@ -81,13 +86,13 @@
             <div class="section-title">
               <div>
                 <p class="eyebrow">Frequency</p>
-                <h2>数字出现频率</h2>
+                <h2 data-i18n="frequencyTitle">数字出现频率</h2>
               </div>
-              <div class="segmented" role="group" aria-label="频率位置">
-                <button class="active" data-position="all">全部</button>
-                <button data-position="hundreds">百位</button>
-                <button data-position="tens">十位</button>
-                <button data-position="ones">个位</button>
+              <div class="segmented" role="group" aria-label="频率位置" data-i18n-attr="aria-label:frequencyAria">
+                <button class="active" data-position="all" data-i18n="positionAll">全部</button>
+                <button data-position="hundreds" data-i18n="positionHundreds">百位</button>
+                <button data-position="tens" data-i18n="positionTens">十位</button>
+                <button data-position="ones" data-i18n="positionOnes">个位</button>
               </div>
             </div>
             <div class="bar-chart" id="frequencyChart"></div>
@@ -97,11 +102,11 @@
             <div class="section-title">
               <div>
                 <p class="eyebrow">Trend</p>
-                <h2>和值趋势</h2>
+                <h2 data-i18n="trendTitle">和值趋势</h2>
               </div>
               <span class="chip" id="sumRange">0 - 0</span>
             </div>
-            <canvas id="sumTrend" width="720" height="280" aria-label="和值趋势图"></canvas>
+            <canvas id="sumTrend" width="720" height="280" aria-label="和值趋势图" data-i18n-attr="aria-label:trendAria"></canvas>
           </div>
         </section>
 
@@ -110,11 +115,11 @@
             <div class="section-title">
               <div>
                 <p class="eyebrow">Pattern</p>
-                <h2>形态分布</h2>
+                <h2 data-i18n="patternTitle">形态分布</h2>
               </div>
             </div>
             <div class="donut-wrap">
-              <canvas id="patternDonut" width="240" height="240" aria-label="形态分布图"></canvas>
+              <canvas id="patternDonut" width="240" height="240" aria-label="形态分布图" data-i18n-attr="aria-label:patternAria"></canvas>
               <div class="legend" id="patternLegend"></div>
             </div>
           </div>
@@ -123,7 +128,7 @@
             <div class="section-title">
               <div>
                 <p class="eyebrow">Parity & Size</p>
-                <h2>奇偶与大小</h2>
+                <h2 data-i18n="parityTitle">奇偶与大小</h2>
               </div>
             </div>
             <div class="stat-lines" id="statLines"></div>
@@ -134,20 +139,20 @@
           <div class="section-title records-title">
             <div>
               <p class="eyebrow">Draw Records</p>
-              <h2>历史开奖列表</h2>
+              <h2 data-i18n="recordsTitle">历史开奖列表</h2>
             </div>
             <div class="filters">
               <label>
-                <span>号码</span>
-                <input id="numberFilter" type="search" placeholder="如 123 或 7" />
+                <span data-i18n="filterNumber">号码</span>
+                <input id="numberFilter" type="search" placeholder="如 123 或 7" data-i18n-attr="placeholder:numberPlaceholder" />
               </label>
               <label>
-                <span>形态</span>
+                <span data-i18n="filterPattern">形态</span>
                 <select id="patternFilter">
-                  <option value="all">全部</option>
-                  <option value="组六">组六</option>
-                  <option value="组三">组三</option>
-                  <option value="豹子">豹子</option>
+                  <option value="all" data-i18n="positionAll">全部</option>
+                  <option value="patternStraight" data-i18n="patternStraight">组六</option>
+                  <option value="patternPair" data-i18n="patternPair">组三</option>
+                  <option value="patternTriple" data-i18n="patternTriple">豹子</option>
                 </select>
               </label>
             </div>
@@ -156,13 +161,13 @@
             <table>
               <thead>
                 <tr>
-                  <th>期号</th>
-                  <th>开奖日期</th>
-                  <th>开奖号码</th>
-                  <th>和值</th>
-                  <th>跨度</th>
-                  <th>形态</th>
-                  <th>奇偶</th>
+                  <th data-i18n="tableDraw">期号</th>
+                  <th data-i18n="tableDate">开奖日期</th>
+                  <th data-i18n="tableNumber">开奖号码</th>
+                  <th data-i18n="tableSum">和值</th>
+                  <th data-i18n="tableSpan">跨度</th>
+                  <th data-i18n="tablePattern">形态</th>
+                  <th data-i18n="tableParity">奇偶</th>
                 </tr>
               </thead>
               <tbody id="recordsBody"></tbody>
@@ -174,7 +179,7 @@
           <div class="section-title">
             <div>
               <p class="eyebrow">Import</p>
-              <h2>导入真实历史数据</h2>
+              <h2 data-i18n="importTitle">导入真实历史数据</h2>
             </div>
           </div>
           <div class="import-grid">
@@ -183,11 +188,11 @@
 第6599回,2026-05-09,015
 第6598回,2026-05-08,773</textarea>
             <div class="import-actions">
-              <p>
+              <p data-i18n="importBody">
                 支持 CSV 表头：draw,date,number。号码会自动补足三位，例如 7 会转为 007。
               </p>
-              <button id="loadCsv">载入 CSV</button>
-              <button id="resetData" class="secondary">恢复演示数据</button>
+              <button id="loadCsv" data-i18n="loadCsv">载入 CSV</button>
+              <button id="resetData" class="secondary" data-i18n="resetData">恢复演示数据</button>
               <p class="status" id="importStatus">尚未导入</p>
             </div>
           </div>
