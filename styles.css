@@ -360,16 +360,36 @@ h2 {
   font-family: Inter, sans-serif;
 }
 
-.chip {
-  padding: 7px 10px;
-  border-radius: 999px;
-  background: var(--blue-soft);
-  color: var(--blue);
-  font-weight: 700;
-}
-
 canvas {
   max-width: 100%;
+}
+
+.trend-chart-wrap {
+  position: relative;
+}
+
+.chart-tooltip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: none;
+  min-width: 70px;
+  border-radius: 8px;
+  padding: 7px 9px;
+  background: #10192b;
+  color: #ffffff;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  pointer-events: none;
+  transform: translate(-50%, -120%);
+  box-shadow: 0 10px 24px rgba(16, 25, 43, 0.22);
+  text-align: center;
+  z-index: 5;
+}
+
+.chart-tooltip.visible {
+  display: block;
 }
 
 .donut-wrap {

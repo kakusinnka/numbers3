@@ -117,9 +117,11 @@
                 <p class="eyebrow">Trend</p>
                 <h2 data-i18n="trendTitle">和值趋势</h2>
               </div>
-              <span class="chip" id="sumRange">0 - 0</span>
             </div>
-            <canvas id="sumTrend" width="720" height="280" aria-label="和值趋势图" data-i18n-attr="aria-label:trendAria"></canvas>
+            <div class="trend-chart-wrap">
+              <canvas id="sumTrend" width="720" height="280" aria-label="和值趋势图" data-i18n-attr="aria-label:trendAria"></canvas>
+              <div class="chart-tooltip" id="sumTooltip"></div>
+            </div>
           </div>
         </section>
 

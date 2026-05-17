@@ -203,6 +203,7 @@ let frequencyPosition = "all";
 let currentLang = localStorage.getItem("numbers3-lang") || "zh";
 let importStatusKey = "importIdle";
 let importStatusValue = null;
+let trendPoints = [];
 
 const colors = ["#1d63c8", "#178c9b", "#d4942f"];
 
@@ -219,12 +220,12 @@ const els = {
   topPatternCount: document.querySelector("#topPatternCount"),
   frequencyChart: document.querySelector("#frequencyChart"),
   sumTrend: document.querySelector("#sumTrend"),
+  sumTooltip: document.querySelector("#sumTooltip"),
   patternDonut: document.querySelector("#patternDonut"),
   patternLegend: document.querySelector("#patternLegend"),
   recordsBody: document.querySelector("#recordsBody"),
   numberFilter: document.querySelector("#numberFilter"),
   patternFilter: document.querySelector("#patternFilter"),
-  sumRange: document.querySelector("#sumRange"),
   csvInput: document.querySelector("#csvInput"),
   loadCsv: document.querySelector("#loadCsv"),
   resetData: document.querySelector("#resetData"),
@@ -360,32 +361,41 @@ function drawLineChart() {
 
   const width = rect.width;
   const height = 280;
-  const pad = 34;
+  const padLeft = 42;
+  const padRight = 22;
+  const padTop = 20;
+  const padBottom = 30;
   const ordered = [...draws].reverse();
   const sums = ordered.map((draw) => sumOf(draw.number));
-  const min = Math.min(...sums, 0);
-  const max = Math.max(...sums, 27);
+  const max = 27;
 
-  els.sumRange.textContent = `${min} - ${max}`;
+  trendPoints = [];
   ctx.clearRect(0, 0, width, height);
   ctx.strokeStyle = "#dce5f0";
   ctx.lineWidth = 1;
-  for (let i = 0; i <= 4; i++) {
-    const y = pad + ((height - pad * 2) / 4) * i;
+
+  [0, 9, 18, 27].forEach((tick) => {
+    const y = height - padBottom - (tick / max) * (height - padTop - padBottom);
     ctx.beginPath();
-    ctx.moveTo(pad, y);
-    ctx.lineTo(width - pad, y);
+    ctx.moveTo(padLeft, y);
+    ctx.lineTo(width - padRight, y);
     ctx.stroke();
-  }
+    ctx.fillStyle = "#647083";
+    ctx.font = "600 12px Inter, sans-serif";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.fillText(String(tick), padLeft - 10, y);
+  });
 
   if (sums.length < 2) return;
-  const xStep = (width - pad * 2) / (sums.length - 1);
-  const yOf = (sum) => height - pad - ((sum - min) / Math.max(max - min, 1)) * (height - pad * 2);
+  const xStep = (width - padLeft - padRight) / (sums.length - 1);
+  const yOf = (sum) => height - padBottom - (sum / max) * (height - padTop - padBottom);
 
   ctx.beginPath();
   sums.forEach((sum, index) => {
-    const x = pad + index * xStep;
+    const x = padLeft + index * xStep;
     const y = yOf(sum);
+    trendPoints.push({ x, y, sum, draw: ordered[index] });
     if (index === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
@@ -394,13 +404,38 @@ function drawLineChart() {
   ctx.stroke();
 
   ctx.fillStyle = "#d4942f";
-  sums.forEach((sum, index) => {
-    const x = pad + index * xStep;
-    const y = yOf(sum);
+  trendPoints.forEach(({ x, y }) => {
     ctx.beginPath();
     ctx.arc(x, y, 3.5, 0, Math.PI * 2);
     ctx.fill();
   });
+}
+
+function hideTrendTooltip() {
+  els.sumTooltip.classList.remove("visible");
+}
+
+function updateTrendTooltip(event) {
+  if (!trendPoints.length) return;
+  const rect = els.sumTrend.getBoundingClientRect();
+  const clientX = event.touches?.[0]?.clientX ?? event.clientX;
+  const clientY = event.touches?.[0]?.clientY ?? event.clientY;
+  const x = clientX - rect.left;
+  const y = clientY - rect.top;
+  const nearest = trendPoints.reduce((best, point) => {
+    const distance = Math.hypot(point.x - x, point.y - y);
+    return distance < best.distance ? { point, distance } : best;
+  }, { point: null, distance: Infinity });
+
+  if (!nearest.point || nearest.distance > 22) {
+    hideTrendTooltip();
+    return;
+  }
+
+  els.sumTooltip.textContent = `${nearest.point.sum}`;
+  els.sumTooltip.style.left = `${nearest.point.x}px`;
+  els.sumTooltip.style.top = `${nearest.point.y}px`;
+  els.sumTooltip.classList.add("visible");
 }
 
 function drawDonut() {
@@ -555,6 +590,12 @@ document.querySelectorAll(".nav-list a").forEach((link) => {
 window.addEventListener("hashchange", () => {
   setActiveNav(location.hash || "#overview");
 });
+
+els.sumTrend.addEventListener("mousemove", updateTrendTooltip);
+els.sumTrend.addEventListener("mouseleave", hideTrendTooltip);
+els.sumTrend.addEventListener("touchstart", updateTrendTooltip, { passive: true });
+els.sumTrend.addEventListener("touchmove", updateTrendTooltip, { passive: true });
+els.sumTrend.addEventListener("touchend", hideTrendTooltip);
 
 els.numberFilter.addEventListener("input", renderRecords);
 els.patternFilter.addEventListener("change", renderRecords);
