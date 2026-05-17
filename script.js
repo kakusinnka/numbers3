@@ -338,16 +338,19 @@ function renderOverview() {
 
 function renderFrequency() {
   const counts = digitCounts(frequencyPosition);
-  const max = Math.max(...counts, 1);
+  const total = frequencyPosition === "all" ? draws.length * 3 : draws.length;
   els.frequencyChart.innerHTML = counts
     .map(
-      (count, digit) => `
-        <div class="bar-row">
+      (count, digit) => {
+        const percent = total > 0 ? (count / total) * 100 : 0;
+        return `
+        <div class="bar-row" title="${digit}: ${count}">
           <span class="digit">${digit}</span>
-          <span class="bar-track"><span class="bar-fill" style="width:${(count / max) * 100}%"></span></span>
+          <span class="bar-track"><span class="bar-fill" style="width:${percent}%"></span></span>
           <span class="bar-count">${count}</span>
         </div>
-      `,
+      `;
+      },
     )
     .join("");
 }
