@@ -47,6 +47,8 @@ const i18n = {
     pageTitle: "Numbers 3 日本彩票历史开奖统计",
     sidebarAria: "主导航",
     languageAria: "语言切换",
+    menuOpen: "打开导航菜单",
+    menuClose: "关闭导航菜单",
     brandSubtitle: "历史开奖统计",
     navOverview: "总览",
     navFrequency: "号码频率",
@@ -122,6 +124,8 @@ const i18n = {
     pageTitle: "ナンバーズ3 過去当選番号データ分析",
     sidebarAria: "メインナビゲーション",
     languageAria: "言語切り替え",
+    menuOpen: "ナビゲーションメニューを開く",
+    menuClose: "ナビゲーションメニューを閉じる",
     brandSubtitle: "過去当選データ分析",
     navOverview: "概要",
     navFrequency: "数字頻度",
@@ -203,6 +207,8 @@ let importStatusValue = null;
 const colors = ["#1d63c8", "#178c9b", "#d4942f"];
 
 const els = {
+  sidebar: document.querySelector(".sidebar"),
+  mobileMenuToggle: document.querySelector(".mobile-menu-toggle"),
   latestNumber: document.querySelector("#latestNumber"),
   latestMeta: document.querySelector("#latestMeta"),
   totalDraws: document.querySelector("#totalDraws"),
@@ -301,6 +307,10 @@ function renderStaticText() {
   document.querySelectorAll(".language-switcher button").forEach((button) => {
     button.classList.toggle("active", button.dataset.lang === currentLang);
   });
+
+  const menuOpen = els.sidebar.classList.contains("menu-open");
+  els.mobileMenuToggle.setAttribute("aria-expanded", String(menuOpen));
+  els.mobileMenuToggle.setAttribute("aria-label", t(menuOpen ? "menuClose" : "menuOpen"));
 
   els.importStatus.textContent =
     importStatusValue === null ? t(importStatusKey) : t(importStatusKey, importStatusValue);
@@ -557,6 +567,18 @@ document.querySelectorAll(".language-switcher button").forEach((button) => {
     currentLang = button.dataset.lang;
     localStorage.setItem("numbers3-lang", currentLang);
     renderAll();
+  });
+});
+
+els.mobileMenuToggle.addEventListener("click", () => {
+  els.sidebar.classList.toggle("menu-open");
+  renderStaticText();
+});
+
+document.querySelectorAll(".nav-list a").forEach((link) => {
+  link.addEventListener("click", () => {
+    els.sidebar.classList.remove("menu-open");
+    renderStaticText();
   });
 });
 
