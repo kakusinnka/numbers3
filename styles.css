@@ -535,6 +535,15 @@ textarea {
 }
 
 @media (max-width: 1080px) {
+  #overview,
+  #frequency,
+  #trend,
+  #patterns,
+  #records,
+  #import {
+    scroll-margin-top: 260px;
+  }
+
   .app-shell {
     grid-template-columns: 1fr;
   }
