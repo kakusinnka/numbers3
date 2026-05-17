@@ -275,8 +275,8 @@ h2 {
   gap: 22px;
 }
 
-.two-columns {
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+.single-panel {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .panel {
@@ -398,43 +398,6 @@ canvas {
   border-radius: 50%;
   display: inline-block;
   margin-right: 8px;
-}
-
-.stat-lines {
-  display: grid;
-  gap: 16px;
-}
-
-.stat-line {
-  display: grid;
-  gap: 8px;
-}
-
-.stat-line header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: var(--muted);
-}
-
-.stacked {
-  display: flex;
-  height: 22px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: #edf2ef;
-}
-
-.stacked span {
-  min-width: 2px;
-}
-
-.stacked .a {
-  background: var(--blue);
-}
-
-.stacked .b {
-  background: var(--amber);
 }
 
 .records-title {
@@ -572,7 +535,7 @@ textarea {
 
   .hero,
   .workspace,
-  .two-columns,
+  .single-panel,
   .import-grid {
     grid-template-columns: 1fr;
   }

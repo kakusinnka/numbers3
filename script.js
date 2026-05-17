@@ -82,7 +82,6 @@ const i18n = {
     trendAria: "和值趋势图",
     patternTitle: "形态分布",
     patternAria: "形态分布图",
-    parityTitle: "奇偶与大小",
     recordsTitle: "历史开奖列表",
     filterNumber: "号码",
     filterPattern: "形态",
@@ -160,7 +159,6 @@ const i18n = {
     trendAria: "合計値推移グラフ",
     patternTitle: "パターン分布",
     patternAria: "パターン分布グラフ",
-    parityTitle: "奇偶と大小",
     recordsTitle: "過去抽せん一覧",
     filterNumber: "番号",
     filterPattern: "パターン",
@@ -223,7 +221,6 @@ const els = {
   sumTrend: document.querySelector("#sumTrend"),
   patternDonut: document.querySelector("#patternDonut"),
   patternLegend: document.querySelector("#patternLegend"),
-  statLines: document.querySelector("#statLines"),
   recordsBody: document.querySelector("#recordsBody"),
   numberFilter: document.querySelector("#numberFilter"),
   patternFilter: document.querySelector("#patternFilter"),
@@ -262,11 +259,6 @@ function patternKeyOf(number) {
 function parityTextOf(number) {
   const odd = digitsOf(number).filter((digit) => digit % 2 === 1).length;
   return t("parityLabel", odd, 3 - odd);
-}
-
-function sizeTextOf(number) {
-  const big = digitsOf(number).filter((digit) => digit >= 5).length;
-  return t("sizeLabel", big, 3 - big);
 }
 
 function countBy(items, pick) {
@@ -461,40 +453,6 @@ function drawDonut() {
     .join("");
 }
 
-function renderStatLines() {
-  const parity = countBy(draws, (draw) => parityTextOf(draw.number));
-  const size = countBy(draws, (draw) => sizeTextOf(draw.number));
-  const sumBand = countBy(draws, (draw) => {
-    const sum = sumOf(draw.number);
-    if (sum <= 9) return t("lowSum");
-    if (sum <= 18) return t("midSum");
-    return t("highSum");
-  });
-
-  const groups = [
-    [t("parityGroup"), parity],
-    [t("sizeGroup"), size],
-    [t("sumBandGroup"), sumBand],
-  ];
-
-  els.statLines.innerHTML = groups
-    .map(([title, data]) => {
-      const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
-      const top = entries[0] || ["-", 0];
-      const second = entries[1] || [t("other"), 0];
-      return `
-        <div class="stat-line">
-          <header><span>${title}</span><strong>${top[0]} · ${t("times", top[1])}</strong></header>
-          <div class="stacked" title="${title}">
-            <span class="a" style="width:${(top[1] / Math.max(draws.length, 1)) * 100}%"></span>
-            <span class="b" style="width:${(second[1] / Math.max(draws.length, 1)) * 100}%"></span>
-          </div>
-        </div>
-      `;
-    })
-    .join("");
-}
-
 function renderRecords() {
   const numberQuery = els.numberFilter.value.trim();
   const patternQuery = els.patternFilter.value;
@@ -554,7 +512,6 @@ function renderAll() {
   renderFrequency();
   drawLineChart();
   drawDonut();
-  renderStatLines();
   renderRecords();
   setActiveNav(location.hash || "#overview");
 }
