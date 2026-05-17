@@ -585,6 +585,7 @@ textarea {
 @media (max-width: 680px) {
   #overview,
   #frequency,
+  #trend,
   #patterns,
   #records,
   #import {
