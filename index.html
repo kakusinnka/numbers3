@@ -43,6 +43,7 @@
         <nav class="nav-list">
           <a href="#overview" class="active" data-i18n="navOverview">总览</a>
           <a href="#frequency" data-i18n="navFrequency">号码频率</a>
+          <a href="#trend" data-i18n="navTrend">和值趋势</a>
           <a href="#patterns" data-i18n="navPatterns">形态分析</a>
           <a href="#records" data-i18n="navRecords">开奖列表</a>
           <a href="#import" data-i18n="navImport">导入数据</a>
@@ -110,20 +111,7 @@
             <div class="bar-chart" id="frequencyChart"></div>
           </div>
 
-          <div class="panel">
-            <div class="section-title">
-              <div>
-                <p class="eyebrow">Trend</p>
-                <h2 data-i18n="trendTitle">和值趋势</h2>
-              </div>
-              <span class="chip" id="sumRange">0 - 0</span>
-            </div>
-            <canvas id="sumTrend" width="720" height="280" aria-label="和值趋势图" data-i18n-attr="aria-label:trendAria"></canvas>
-          </div>
-        </section>
-
-        <section class="workspace two-columns" id="patterns">
-          <div class="panel">
+          <div class="panel" id="patterns">
             <div class="section-title">
               <div>
                 <p class="eyebrow">Pattern</p>
@@ -135,15 +123,20 @@
               <div class="legend" id="patternLegend"></div>
             </div>
           </div>
+        </section>
 
-          <div class="panel">
+        <section class="workspace single-panel">
+          <div class="panel" id="trend">
             <div class="section-title">
               <div>
-                <p class="eyebrow">Parity & Size</p>
-                <h2 data-i18n="parityTitle">奇偶与大小</h2>
+                <p class="eyebrow">Trend</p>
+                <h2 data-i18n="trendTitle">和值趋势</h2>
               </div>
             </div>
-            <div class="stat-lines" id="statLines"></div>
+            <div class="trend-chart-wrap">
+              <canvas id="sumTrend" width="720" height="280" aria-label="和值趋势图" data-i18n-attr="aria-label:trendAria"></canvas>
+              <div class="chart-tooltip" id="sumTooltip"></div>
+            </div>
           </div>
         </section>
 
