@@ -582,6 +582,14 @@ textarea {
 }
 
 @media (max-width: 680px) {
+  #overview,
+  #frequency,
+  #patterns,
+  #records,
+  #import {
+    scroll-margin-top: 98px;
+  }
+
   main {
     padding: 16px;
   }
