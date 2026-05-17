@@ -111,6 +111,21 @@
             <div class="bar-chart" id="frequencyChart"></div>
           </div>
 
+          <div class="panel" id="patterns">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">Pattern</p>
+                <h2 data-i18n="patternTitle">形态分布</h2>
+              </div>
+            </div>
+            <div class="donut-wrap">
+              <canvas id="patternDonut" width="240" height="240" aria-label="形态分布图" data-i18n-attr="aria-label:patternAria"></canvas>
+              <div class="legend" id="patternLegend"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="workspace single-panel">
           <div class="panel" id="trend">
             <div class="section-title">
               <div>
@@ -121,21 +136,6 @@
             <div class="trend-chart-wrap">
               <canvas id="sumTrend" width="720" height="280" aria-label="和值趋势图" data-i18n-attr="aria-label:trendAria"></canvas>
               <div class="chart-tooltip" id="sumTooltip"></div>
-            </div>
-          </div>
-        </section>
-
-        <section class="workspace single-panel" id="patterns">
-          <div class="panel">
-            <div class="section-title">
-              <div>
-                <p class="eyebrow">Pattern</p>
-                <h2 data-i18n="patternTitle">形态分布</h2>
-              </div>
-            </div>
-            <div class="donut-wrap">
-              <canvas id="patternDonut" width="240" height="240" aria-label="形态分布图" data-i18n-attr="aria-label:patternAria"></canvas>
-              <div class="legend" id="patternLegend"></div>
             </div>
           </div>
         </section>
