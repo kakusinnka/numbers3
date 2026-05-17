@@ -551,6 +551,13 @@ function renderAll() {
   drawDonut();
   renderStatLines();
   renderRecords();
+  setActiveNav(location.hash || "#overview");
+}
+
+function setActiveNav(hash) {
+  document.querySelectorAll(".nav-list a").forEach((link) => {
+    link.classList.toggle("active", link.getAttribute("href") === hash);
+  });
 }
 
 document.querySelectorAll(".segmented button").forEach((button) => {
@@ -577,9 +584,14 @@ els.mobileMenuToggle.addEventListener("click", () => {
 
 document.querySelectorAll(".nav-list a").forEach((link) => {
   link.addEventListener("click", () => {
+    setActiveNav(link.getAttribute("href"));
     els.sidebar.classList.remove("menu-open");
     renderStaticText();
   });
+});
+
+window.addEventListener("hashchange", () => {
+  setActiveNav(location.hash || "#overview");
 });
 
 els.numberFilter.addEventListener("input", renderRecords);
