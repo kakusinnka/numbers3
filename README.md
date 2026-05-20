@@ -60,6 +60,28 @@ node tools/fetch-numbers3.mjs --source=https://example.com/numbers3.csv
 
 注意：直接用 `file://` 打开 `index.html` 时，浏览器通常会阻止读取本地 JSON 文件。因此真实数据预览建议使用本地静态服务器，例如 `http://127.0.0.1:8765/index.html`。
 
+## 自动更新数据
+
+仓库通过 GitHub Actions 自动维护近 100 期开奖数据，workflow 位于 `.github/workflows/update-numbers3-data.yml`。
+
+自动任务会在日本时间工作日 21:30 左右执行一次，对应 cron 配置为 UTC 时间：
+
+```yaml
+cron: "30 12 * * 1-5"
+```
+
+任务流程如下：
+
+1. 检出 `develop` 分支。
+2. 使用 Node.js 20。
+3. 运行 `node --check tools/fetch-numbers3.mjs` 检查脚本语法。
+4. 运行 `node tools/fetch-numbers3.mjs` 重新生成 `data/numbers3-latest100.json`。
+5. 校验 JSON 是否包含 100 条记录，以及最新记录是否包含合法的期号、日期和三位号码。
+6. 如果 JSON 有变化，自动创建 `automation/update-numbers3-data -> develop` 的 PR。
+7. 如果 JSON 没有变化，不会创建新 PR。
+
+也可以在 GitHub 页面手动触发这个 workflow：进入 Actions，选择“更新 Numbers3 真实数据”，点击 Run workflow。
+
 ## 本地预览步骤
 
 本地预览时进行了以下操作：
