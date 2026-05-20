@@ -57,7 +57,7 @@ const i18n = {
     navRecords: "开奖列表",
     navImport: "导入数据",
     sourceTitle: "数据说明",
-    sourceBody: "页面内置为演示数据。可在“导入数据”中粘贴真实 CSV，字段为 draw,date,number。",
+    sourceBody: "页面默认加载近100期真实开奖数据。也可在“导入数据”中粘贴 CSV，字段为 draw,date,number。",
     heroTitle: "日本ナンバーズ3历史开奖结果统计站",
     heroBody: "快速查看开奖号码、和值走势、数字冷热、奇偶大小与组选形态，适合用来整理公开历史数据并做轻量分析。",
     latestAria: "最新开奖",
@@ -134,7 +134,7 @@ const i18n = {
     navRecords: "抽せん一覧",
     navImport: "データ取込",
     sourceTitle: "データについて",
-    sourceBody: "内蔵データはサンプルです。「データ取込」で実データの CSV を貼り付けできます。列は draw,date,number です。",
+    sourceBody: "初期表示では直近100回分の実データを読み込みます。「データ取込」で CSV を貼り付けることもできます。列は draw,date,number です。",
     heroTitle: "ナンバーズ3 過去当選番号分析サイト",
     heroBody: "当選番号、合計値の推移、数字の出現頻度、奇偶・大小・組み合わせパターンをすばやく確認できます。",
     latestAria: "最新抽せん",
@@ -204,6 +204,7 @@ let currentLang = localStorage.getItem("numbers3-lang") || "zh";
 let importStatusKey = "importIdle";
 let importStatusValue = null;
 let trendPoints = [];
+const defaultDataUrl = "data/numbers3-latest100.json";
 
 const colors = ["#1d63c8", "#178c9b", "#d4942f"];
 
@@ -541,6 +542,33 @@ function parseCsv(text) {
   });
 }
 
+function normalizeDraws(items) {
+  if (!Array.isArray(items)) throw new Error("Invalid draw data.");
+
+  return items.map((item, index) => {
+    const number = String(item.number || "").replace(/\D/g, "").padStart(3, "0").slice(-3);
+    if (!/^\d{3}$/.test(number)) throw new Error(t("csvInvalidNumber", index + 1));
+    return {
+      draw: String(item.draw || t("drawFallback", index + 1)),
+      date: String(item.date || ""),
+      number,
+    };
+  });
+}
+
+async function loadDefaultDraws() {
+  try {
+    const response = await fetch(defaultDataUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Failed to load ${defaultDataUrl}`);
+    draws = normalizeDraws(await response.json());
+  } catch (error) {
+    console.warn("Using demo draws because default data could not be loaded.", error);
+    draws = [...demoDraws];
+  }
+
+  renderAll();
+}
+
 function renderAll() {
   renderStaticText();
   renderOverview();
@@ -641,4 +669,4 @@ new ResizeObserver(() => {
   drawLineChart();
 }).observe(els.sumTrend.parentElement);
 
-renderAll();
+loadDefaultDraws();
