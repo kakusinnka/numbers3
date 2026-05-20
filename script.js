@@ -72,7 +72,7 @@ const i18n = {
     metricPattern: "最常见形态",
     occurrence: (count) => `出现 ${count} 次`,
     ratio: (value) => `占比 ${value}%`,
-    frequencyTitle: "数字出现频率",
+    frequencyTitle: "号码频率",
     frequencyAria: "频率位置",
     positionAll: "全部",
     positionHundreds: "百位",
