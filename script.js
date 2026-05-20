@@ -637,4 +637,8 @@ window.addEventListener("resize", () => {
   drawDonut();
 });
 
+new ResizeObserver(() => {
+  drawLineChart();
+}).observe(els.sumTrend.parentElement);
+
 renderAll();
