@@ -15,9 +15,50 @@
 - 和值趋势：用折线图展示近期和值变化。
 - 形态分析：统计组六、组三、豹子，以及奇偶、大小、和值区间。
 - 开奖列表：支持按号码和形态筛选历史记录。
-- 导入数据：支持粘贴真实 CSV 数据，替换内置演示数据。
+- 导入数据：支持粘贴 CSV 数据，临时替换默认数据集。
 
-技术上采用纯静态实现，只包含 `index.html`、`styles.css`、`script.js` 三个核心文件。不需要后端、不需要数据库，直接本地打开或通过静态服务器访问即可运行。页面内置数据为演示数据，实际使用时可以导入官方或自行整理的历史开奖 CSV。
+技术上采用纯静态实现，只包含 `index.html`、`styles.css`、`script.js` 三个核心文件。不需要后端、不需要数据库，通过本地静态服务器或 GitHub Pages 访问即可运行。页面初期显示会优先读取 `data/numbers3-latest100.json` 中的近 100 期真实开奖数据；如果该文件读取失败，则自动回退到 `script.js` 内的演示数据。
+
+## 真实数据获取流程
+
+真实数据采用“构建时抓取、静态文件发布”的方式处理，而不是让浏览器在用户访问页面时直接请求外部站点。
+
+1. 数据更新脚本位于 `tools/fetch-numbers3.mjs`。
+2. 脚本请求 CSV 数据源 `https://znlandstar.com/Numbers3/DownLoadCsv`。
+3. CSV 数据源页面说明其数据基于「みずほ銀行 ナンバーズ3 公式サイト」发布信息。
+4. 脚本解析 CSV 表头中的 `回別`、`抽選日`、`抽せん数字` 三列。
+5. 脚本按期号倒序排序，只保留近 100 期。
+6. 脚本把数据转换成网站使用的结构：
+
+   ```json
+   {
+     "draw": "第6987回",
+     "date": "2026-05-20",
+     "number": "762"
+   }
+   ```
+
+7. 最终生成 `data/numbers3-latest100.json`，由 `script.js` 在页面初始化时通过 `fetch()` 加载。
+
+更新真实数据时运行：
+
+```powershell
+node tools/fetch-numbers3.mjs
+```
+
+如需调整数量，可以指定 `--limit`：
+
+```powershell
+node tools/fetch-numbers3.mjs --limit=100
+```
+
+如果未来要切换到其他 CSV 地址，可以指定 `--source`：
+
+```powershell
+node tools/fetch-numbers3.mjs --source=https://example.com/numbers3.csv
+```
+
+注意：直接用 `file://` 打开 `index.html` 时，浏览器通常会阻止读取本地 JSON 文件。因此真实数据预览建议使用本地静态服务器，例如 `http://127.0.0.1:8765/index.html`。
 
 ## 本地预览步骤
 
