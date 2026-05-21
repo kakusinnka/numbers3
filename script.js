@@ -8,7 +8,8 @@ const defaultCsvInput = `draw,date,number
 const i18n = {
   zh: {
     docLang: "zh-CN",
-    pageTitle: "Numbers 3 日本彩票历史开奖统计",
+    pageTitle: "排列3 日本彩票历史开奖统计",
+    brandName: "排列3",
     sidebarAria: "主导航",
     languageAria: "语言切换",
     menuOpen: "打开导航菜单",
@@ -22,7 +23,7 @@ const i18n = {
     navImport: "导入数据",
     sourceTitle: "数据说明",
     sourceBody: "页面默认加载近100期真实开奖数据。也可在“导入数据”中粘贴 CSV，字段为 draw,date,number。",
-    heroTitle: "日本ナンバーズ3历史开奖结果统计站",
+    heroTitle: "日本排列3历史开奖结果统计站",
     heroBody: "快速查看开奖号码、和值走势、数字冷热、奇偶大小与组选形态，适合用来整理公开历史数据并做轻量分析。",
     latestAria: "最新开奖",
     latestLabel: "最新一期",
@@ -86,6 +87,7 @@ const i18n = {
   ja: {
     docLang: "ja",
     pageTitle: "ナンバーズ3 過去当選番号データ分析",
+    brandName: "ナンバーズ3",
     sidebarAria: "メインナビゲーション",
     languageAria: "言語切り替え",
     menuOpen: "ナビゲーションメニューを開く",
