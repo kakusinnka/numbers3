@@ -1,45 +1,9 @@
-const demoDraws = [
-  ["第6607回", "2026-05-12", "394"],
-  ["第6606回", "2026-05-11", "628"],
-  ["第6605回", "2026-05-10", "177"],
-  ["第6604回", "2026-05-09", "042"],
-  ["第6603回", "2026-05-08", "905"],
-  ["第6602回", "2026-05-07", "551"],
-  ["第6601回", "2026-05-06", "286"],
-  ["第6600回", "2026-05-05", "730"],
-  ["第6599回", "2026-05-04", "444"],
-  ["第6598回", "2026-05-03", "819"],
-  ["第6597回", "2026-05-02", "063"],
-  ["第6596回", "2026-05-01", "592"],
-  ["第6595回", "2026-04-30", "116"],
-  ["第6594回", "2026-04-29", "248"],
-  ["第6593回", "2026-04-28", "970"],
-  ["第6592回", "2026-04-27", "335"],
-  ["第6591回", "2026-04-26", "681"],
-  ["第6590回", "2026-04-25", "204"],
-  ["第6589回", "2026-04-24", "777"],
-  ["第6588回", "2026-04-23", "459"],
-  ["第6587回", "2026-04-22", "020"],
-  ["第6586回", "2026-04-21", "864"],
-  ["第6585回", "2026-04-20", "139"],
-  ["第6584回", "2026-04-19", "506"],
-  ["第6583回", "2026-04-18", "292"],
-  ["第6582回", "2026-04-17", "748"],
-  ["第6581回", "2026-04-16", "611"],
-  ["第6580回", "2026-04-15", "387"],
-  ["第6579回", "2026-04-14", "094"],
-  ["第6578回", "2026-04-13", "525"],
-  ["第6577回", "2026-04-12", "860"],
-  ["第6576回", "2026-04-11", "318"],
-  ["第6575回", "2026-04-10", "999"],
-  ["第6574回", "2026-04-09", "157"],
-  ["第6573回", "2026-04-08", "426"],
-  ["第6572回", "2026-04-07", "733"],
-  ["第6571回", "2026-04-06", "084"],
-  ["第6570回", "2026-04-05", "692"],
-  ["第6569回", "2026-04-04", "240"],
-  ["第6568回", "2026-04-03", "515"],
-].map(([draw, date, number]) => ({ draw, date, number }));
+const defaultCsvInput = `draw,date,number
+第6607回,2026-05-12,394
+第6606回,2026-05-11,628
+第6605回,2026-05-10,177
+第6604回,2026-05-09,042
+第6603回,2026-05-08,905`;
 
 const i18n = {
   zh: {
@@ -96,10 +60,10 @@ const i18n = {
     importTitle: "导入真实历史数据",
     importBody: "支持 CSV 表头：draw,date,number。号码会自动补足三位，例如 7 会转为 007。",
     loadCsv: "载入 CSV",
-    resetData: "恢复演示数据",
+    resetData: "恢复初始数据",
     importIdle: "尚未导入",
     imported: (count) => `已载入 ${count} 条记录`,
-    resetDone: "已恢复演示数据",
+    resetDone: "已恢复初始数据",
     csvNeedRows: "至少需要表头和一行数据。",
     csvNeedHeaders: "CSV 表头必须包含 draw,date,number。",
     csvInvalidNumber: (line) => `第 ${line} 行号码无效。`,
@@ -173,10 +137,10 @@ const i18n = {
     importTitle: "実データを取り込む",
     importBody: "CSV の列は draw,date,number に対応しています。番号は 3 桁に自動補完されます。例: 7 は 007。",
     loadCsv: "CSV を読込",
-    resetData: "サンプルに戻す",
+    resetData: "初期データに戻す",
     importIdle: "未取込",
     imported: (count) => `${count}件を読み込みました`,
-    resetDone: "サンプルデータに戻しました",
+    resetDone: "初期データに戻しました",
     csvNeedRows: "ヘッダーと 1 行以上のデータが必要です。",
     csvNeedHeaders: "CSV ヘッダーには draw,date,number が必要です。",
     csvInvalidNumber: (line) => `${line} 行目の番号が無効です。`,
@@ -198,7 +162,8 @@ const i18n = {
   },
 };
 
-let draws = [...demoDraws];
+let defaultJsonDraws = null;
+let draws = [];
 let frequencyPosition = "all";
 let currentLang = localStorage.getItem("numbers3-lang") || "zh";
 let importStatusKey = "importIdle";
@@ -542,6 +507,8 @@ function parseCsv(text) {
   });
 }
 
+const demoDraws = parseCsv(defaultCsvInput);
+
 function normalizeDraws(items) {
   if (!Array.isArray(items)) throw new Error("Invalid draw data.");
 
@@ -560,9 +527,11 @@ async function loadDefaultDraws() {
   try {
     const response = await fetch(defaultDataUrl, { cache: "no-store" });
     if (!response.ok) throw new Error(`Failed to load ${defaultDataUrl}`);
-    draws = normalizeDraws(await response.json());
+    defaultJsonDraws = normalizeDraws(await response.json());
+    draws = [...defaultJsonDraws];
   } catch (error) {
     console.warn("Using demo draws because default data could not be loaded.", error);
+    defaultJsonDraws = null;
     draws = [...demoDraws];
   }
 
@@ -643,6 +612,8 @@ els.sumTrend.addEventListener("touchend", hideTrendTooltip);
 
 els.numberFilter.addEventListener("input", renderRecords);
 els.patternFilter.addEventListener("change", renderRecords);
+els.csvInput.value = defaultCsvInput;
+
 els.loadCsv.addEventListener("click", () => {
   try {
     draws = parseCsv(els.csvInput.value);
@@ -654,7 +625,8 @@ els.loadCsv.addEventListener("click", () => {
   }
 });
 els.resetData.addEventListener("click", () => {
-  draws = [...demoDraws];
+  els.csvInput.value = defaultCsvInput;
+  draws = defaultJsonDraws ? [...defaultJsonDraws] : [...demoDraws];
   importStatusKey = "resetDone";
   importStatusValue = null;
   renderAll();
