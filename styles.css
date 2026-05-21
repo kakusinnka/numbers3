@@ -430,6 +430,14 @@ canvas {
   align-items: flex-end;
 }
 
+.records-panel {
+  --records-panel-max-height: calc(100vh - 60px);
+  --records-body-max-height: calc(100vh - 230px);
+  display: flex;
+  flex-direction: column;
+  max-height: var(--records-panel-max-height);
+}
+
 .filters {
   display: flex;
   gap: 12px;
@@ -454,13 +462,35 @@ canvas {
 }
 
 .table-wrap {
+  flex: 1 1 auto;
   overflow-x: auto;
+  min-height: 0;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   min-width: 760px;
+  table-layout: fixed;
+}
+
+thead,
+#recordsBody {
+  display: block;
+}
+
+thead tr,
+#recordsBody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+#recordsBody {
+  max-height: min(620px, var(--records-body-max-height));
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
 }
 
 th,
@@ -578,6 +608,11 @@ textarea {
   .metrics-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .records-panel {
+    --records-panel-max-height: calc(100vh - 284px);
+    --records-body-max-height: calc(100vh - 432px);
+  }
 }
 
 @media (max-width: 680px) {
@@ -688,6 +723,11 @@ textarea {
   .filters {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .records-panel {
+    --records-panel-max-height: calc(100vh - 118px);
+    --records-body-max-height: calc(100vh - 320px);
   }
 
   .segmented {
