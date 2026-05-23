@@ -78,7 +78,17 @@ cron: "30 12 * * 1-5"
 4. 运行 `node tools/fetch-numbers3.mjs` 重新生成 `data/numbers3-latest100.json`。
 5. 校验 JSON 是否包含 100 条记录，以及最新记录是否包含合法的期号、日期和三位号码。
 6. 如果 JSON 有变化，自动创建 `automation/update-numbers3-data -> develop` 的 PR。
-7. 如果 JSON 没有变化，不会创建新 PR。
+7. 自动合并数据更新 PR 到 `develop`。
+8. 自动创建 `develop -> main` 的发布 PR。
+9. 自动合并发布 PR 到 `main`，完成 GitHub Pages 发布。
+10. 如果 JSON 没有变化，不会创建新 PR，也不会触发发布。
+
+该 workflow 依赖仓库 Actions 权限允许 GitHub Actions 创建 PR。需要在 GitHub 仓库设置中开启：
+
+```text
+Settings -> Actions -> General -> Workflow permissions
+勾选 Allow GitHub Actions to create and approve pull requests
+```
 
 也可以在 GitHub 页面手动触发这个 workflow：进入 Actions，选择“更新 Numbers3 真实数据”，点击 Run workflow。
 

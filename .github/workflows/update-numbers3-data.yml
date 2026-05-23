@@ -5,6 +5,10 @@ on:
     - cron: "30 12 * * 1-5"
   workflow_dispatch:
 
+concurrency:
+  group: update-numbers3-data
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pull-requests: write
@@ -36,6 +40,7 @@ jobs:
           node -e "const fs=require('fs'); const data=JSON.parse(fs.readFileSync('data/numbers3-latest100.json','utf8')); if (!Array.isArray(data) || data.length !== 100) throw new Error('numbers3-latest100.json must contain 100 records.'); if (!/^第\\d+回$/.test(data[0].draw) || !/^\\d{4}-\\d{2}-\\d{2}$/.test(data[0].date) || !/^\\d{3}$/.test(data[0].number)) throw new Error('Latest record has invalid shape.'); console.log(JSON.stringify({ count: data.length, latest: data[0] }, null, 2));"
 
       - name: 创建数据更新 PR
+        id: data-pr
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -54,3 +59,63 @@ jobs:
 
             - `node --check tools/fetch-numbers3.mjs`
             - 校验 `data/numbers3-latest100.json` 包含 100 条记录
+
+      - name: 合并数据更新 PR 到 develop
+        if: steps.data-pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.data-pr.outputs.pull-request-number }}
+        run: |
+          for attempt in {1..10}; do
+            state="$(gh pr view "$PR_NUMBER" --json mergeStateStatus --jq '.mergeStateStatus')"
+            echo "Data PR merge state: $state"
+            if [ "$state" = "CLEAN" ] || [ "$state" = "UNSTABLE" ] || [ "$state" = "HAS_HOOKS" ]; then
+              break
+            fi
+            sleep 3
+          done
+          gh pr merge "$PR_NUMBER" --merge --delete-branch
+
+      - name: 创建 develop 到 main 的发布 PR
+        if: steps.data-pr.outputs.pull-request-number != ''
+        id: release-pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number="$(gh pr list --base main --head develop --state open --json number --jq '.[0].number')"
+          if [ -z "$pr_number" ]; then
+            cat > release_body.md <<'EOF'
+          ## 发布内容
+
+          - 自动发布近100期开奖数据更新
+          - 来源 PR: #${{ steps.data-pr.outputs.pull-request-number }}
+
+          ## 验证
+
+          - `node --check tools/fetch-numbers3.mjs`
+          - 校验 `data/numbers3-latest100.json` 包含 100 条记录
+          EOF
+            pr_url="$(gh pr create \
+              --base main \
+              --head develop \
+              --title "发布近100期开奖数据自动更新" \
+              --body-file release_body.md)"
+            pr_number="${pr_url##*/}"
+          fi
+          echo "number=$pr_number" >> "$GITHUB_OUTPUT"
+
+      - name: 合并发布 PR 到 main
+        if: steps.data-pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.release-pr.outputs.number }}
+        run: |
+          for attempt in {1..10}; do
+            state="$(gh pr view "$PR_NUMBER" --json mergeStateStatus --jq '.mergeStateStatus')"
+            echo "Release PR merge state: $state"
+            if [ "$state" = "CLEAN" ] || [ "$state" = "UNSTABLE" ] || [ "$state" = "HAS_HOOKS" ]; then
+              break
+            fi
+            sleep 3
+          done
+          gh pr merge "$PR_NUMBER" --merge
